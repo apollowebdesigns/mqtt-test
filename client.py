@@ -16,8 +16,6 @@ class MQTTClient:
 
 
     def on_message(self, mqttc, obj, msg):
-        print('message!!!')
-        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
         pass
 
 
@@ -33,17 +31,21 @@ class MQTTClient:
         pass
 
     def start(self):
-        self.mqttc.loop_forever()
+        self.mqttc.loop_start()
+
+    def stop(self):
+        self.mqttc.loop_stop()
 
 
 class MQTTReviever(MQTTClient):
     received = False
+    captured_message = 'default'
 
     def __init__(self):
         super().__init__()
 
     def on_message(self, mqttc, obj, msg):
-        return msg.topic + " " + str(msg.qos) + " " + str(msg.payload)
+        self.captured_message = msg.topic + " " + str(msg.qos) + " " + str(msg.payload)
+        # mqttc.disconnect()
+        return self.captured_message
 
-c = MQTTReviever()
-c.start()

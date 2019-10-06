@@ -1,5 +1,7 @@
 import paho.mqtt.publish as publish
 
-done = publish.single("paho/test/single", "boo")
-print('done')
-print(done)
+
+def publish_message():
+    message = "boo"
+    done = publish.single("paho/test/single", "boo")
+    return message
