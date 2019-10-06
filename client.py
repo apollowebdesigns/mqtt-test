@@ -1,39 +1,49 @@
 import paho.mqtt.client as mqtt
 
 
-def on_connect(mqttc, obj, flags, rc):
-    pass
+class MQTTClient:
+    def __init__(self):
+        self.mqttc = mqtt.Client()
+        self.mqttc.on_message = self.on_message
+        self.mqttc.on_connect = self.on_connect
+        self.mqttc.on_publish = self.on_publish
+        self.mqttc.on_subscribe = self.on_subscribe
+        self.mqttc.connect("localhost", 1883, 60)
+        self.mqttc.subscribe("paho/test/single", 0)
+
+    def on_connect(self, mqttc, obj, flags, rc):
+        pass
 
 
-def on_message(mqttc, obj, msg):
-    print('message!!!')
-    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    def on_message(self, mqttc, obj, msg):
+        print('message!!!')
+        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+        pass
 
 
-def on_publish(mqttc, obj, mid):
-    pass
+    def on_publish(self, mqttc, obj, mid):
+        pass
 
 
-def on_subscribe(mqttc, obj, mid, granted_qos):
-    pass
+    def on_subscribe(self, mqttc, obj, mid, granted_qos):
+        pass
 
 
-def on_log(mqttc, obj, level, string):
-    pass
+    def on_log(self, mqttc, obj, level, string):
+        pass
+
+    def start(self):
+        self.mqttc.loop_forever()
 
 
-# If you want to use a specific client id, use
-# mqttc = mqtt.Client("client-id")
-# but note that the client id must be unique on the broker. Leaving the client
-# id parameter empty will generate a random id for you.
-mqttc = mqtt.Client()
-mqttc.on_message = on_message
-mqttc.on_connect = on_connect
-mqttc.on_publish = on_publish
-mqttc.on_subscribe = on_subscribe
-# Uncomment to enable debug messages
-# mqttc.on_log = on_log
-mqttc.connect("localhost", 1883, 60)
-mqttc.subscribe("paho/test/single", 0)
+class MQTTReviever(MQTTClient):
+    received = False
 
-mqttc.loop_forever()
+    def __init__(self):
+        super().__init__()
+
+    def on_message(self, mqttc, obj, msg):
+        return msg.topic + " " + str(msg.qos) + " " + str(msg.payload)
+
+c = MQTTReviever()
+c.start()
